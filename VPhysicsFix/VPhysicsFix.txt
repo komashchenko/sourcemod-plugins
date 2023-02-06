@@ -1,0 +1,38 @@
+"Games"
+{
+	"csgo"
+	{
+		"Addresses"
+		{
+			"g_pMDLCache"
+			{
+				"signature"	"CStaticPropMgr::PrecacheLighting"
+				"linux"
+				{
+					"read"	"0x2A"
+					"read"	"0x0"
+				}
+			}
+		}
+		"Signatures"
+		{
+			"CCollisionProperty::SetSolid"
+			{
+				"library"	"server"
+				"linux"		"\x55\x89\xE5\x57\x56\x53\x83\xEC\x3C\x8B\x5D\x08\x0F\xB6\x53\x22"
+			}
+			"CStaticPropMgr::PrecacheLighting"
+			{
+				"library"	"engine"
+				"linux"		"\x55\x89\xE5\x57\x56\x31\xF6\x53\x83\xEC\x18"
+			}
+		}
+		"Offsets"
+		{
+			"CMDLCache::GetVCollide"
+			{
+				"linux"		"16"
+			}
+		}
+	}
+}
