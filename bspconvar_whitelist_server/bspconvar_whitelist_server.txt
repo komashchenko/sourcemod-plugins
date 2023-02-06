@@ -1,0 +1,72 @@
+"Games"
+{
+	"csgo"
+	{
+		"Addresses"
+		{
+			// Спасибо GAMMACASE
+			// https://github.com/GAMMACASE/MomSurfFix/blob/master/addons/sourcemod/gamedata/momsurffix2.games.txt#L312
+			"g_pMemAlloc"
+			{
+				"windows"
+				{
+					"signature" "g_pMemAllocFunc"
+					"read" "20"
+					"read" "0"
+				}
+				"linux"
+				{
+					"signature" "g_pMemAllocFunc"
+					"read" "191"
+				}
+				
+				"read"	"0"
+			}
+		}
+		"Signatures"
+		{
+			"IsWhiteListedCmd"
+			{
+				"library"		"engine"
+				"linux"			"\x55\x89\xE5\x57\x56\x53\x83\xEC\x2C\xA1\x2A\x2A\x2A\x2A\x8B\x75\x08"
+			}
+			"CMultiplayRules::CMultiplayRules"
+			{
+				"library"		"server"
+				"linux"			"\x55\x89\xE5\x57\x56\x53\x81\xEC\x38\x01\x00\x00\x8B\x45\x08\x65\x8B\x0D\x14\x00\x00\x00"
+			}
+			
+			"g_pMemAllocFunc"
+			{
+				"library"		"server"
+				"windows"		"\x55\x8B\xEC\x56\x8B\xF1\x83\x4E\x30\x04"
+				"linux"			"\x55\x89\xE5\x57\x56\x53\x81\xEC\x3C\x01\x00\x00\x8B\x45\x08\x65\x8B\x0D\x14\x00\x00\x00\x89\x4D\xE4\x31\xC9\x89\xC1"
+			}
+		}
+		"Offsets"
+		{
+			"IsWhiteListedCmd_Patch0"
+			{
+				"linux"			"0x91" // "bspconvar_whitelist.txt"
+			}
+			"IsWhiteListedCmd_Patch1"
+			{
+				"linux"			"0x14F" // "bspconvar_whitelist.txt"
+			}
+			"CMultiplayRules::CMultiplayRules_Patch0"
+			{
+				"linux"			"0x8B" // "bspconvar_whitelist.txt"
+			}
+			"CMultiplayRules::CMultiplayRules_Patch1"
+			{
+				"linux"			"0x131" // "%s - missing cvar specified in bspconvar_whitelist.txt\n"
+			}
+			
+			"Malloc"
+			{
+				"windows"		"1"
+				"linux"			"0"
+			}
+		}
+	}
+}
