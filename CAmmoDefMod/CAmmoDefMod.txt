@@ -1,0 +1,44 @@
+"Games"
+{
+	"csgo"
+	{
+		"Addresses"
+		{
+			"g_pCVar"
+			{
+				"signature"	"ConVar_Unregister"
+				"linux"
+				{
+					"read"  "0x1"
+				}
+				
+				"read"  "0x0"
+			}
+		}
+		"Signatures"
+		{
+			"ConVar_Unregister"
+			{
+				"library"       "engine"
+				"linux"         "\xA1\x2A\x2A\x2A\x2A\x85\xC0\x74\x2A\x80\x3D\x2A\x2A\x2A\x2A\x00\x75\x2A\xC3\x90\x8D\x74\x26\x00\x55\x89\xE5\x83\xEC\x10\x8B\x10\xFF\x35"
+			}
+			"GetAmmoDef"
+			{
+				"library"       "server"
+				"linux"         "\x80\x3D\x2A\x2A\x2A\x2A\x00\x74\x2A\xB8\x2A\x2A\x2A\x2A\xC3\x90\x55\x89\xE5\x83\xEC\x08\xE8\x2A\x2A\x2A\x2A\xB8\x2A\x2A\x2A\x2A\xC9"
+			}
+			"CAmmoDef::Index"
+			{
+				"library"       "server"
+				"linux"         "\x55\x89\xE5\x57\x56\x53\x83\xEC\x0C\x8B\x45\x0C\x8B\x75\x08\x85\xC0\x74\x2A\x83\x7E\x04\x01"
+			}
+		}
+		"Offsets"
+		{
+			"ICvar::FindVar"
+			{
+				"linux"		"16"
+			}
+		}
+	}
+}
