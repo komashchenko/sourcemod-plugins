@@ -1,0 +1,38 @@
+"Games"
+{
+	"csgo"
+	{
+		"Addresses"
+		{
+			"TheBots"
+			{
+				"linux"
+				{
+					"signature"	"CheckAreaAgainstAllZoneAreas"
+					"read"		"0xB"
+				}
+				"windows"
+				{
+					"signature"	"CheckAreaAgainstAllZoneAreas"
+					"read"		"0x8"
+				}
+				"read"		"0x0"
+			}
+		}
+		"Signatures"
+		{
+			"CheckAreaAgainstAllZoneAreas" // Area #%d is disconnected from goal area #%d
+			{
+				"library"	"server"
+				"linux"		"\x55\x89\xE5\x57\x56\x53\x83\xEC\x3C\x8B\x1D\x2A\x2A\x2A\x2A\x89\x45\xD0"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x14\x8B\x15\x2A\x2A\x2A\x2A\x33\xC0"
+			}
+			"CBotManager::ValidateActiveGrenades" // First function call in CBotManager::StartFrame
+			{
+				"library"	"server"
+				"linux"		"\x55\x89\xE5\x57\x56\x53\x83\xEC\x1C\x8B\x5D\x08\x0F\xB7\x7B\x10"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x08\x53\x0F\xB7\x59\x10"
+			}
+		}
+	}
+}
