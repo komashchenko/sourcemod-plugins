@@ -1,0 +1,59 @@
+"Games"
+{
+	"csgo"
+	{
+		"Addresses"
+		{
+			"DropForAllPlayersPatch"
+			{
+				"signature"	"Helper_FillServerReservationStateAndPlayers"
+				"linux"
+				{
+					"offset"	"0x3FC"
+				}
+				"windows"
+				{
+					"offset"	"0x1DE"
+				}
+			}
+		}
+		"Functions"
+		{
+			"CCSGameRules::RecordPlayerItemDrop"
+			{
+				"signature"	"CCSGameRules::RecordPlayerItemDrop"
+				"callconv"	"thiscall"
+				"return"	"void"
+				"this"		"ignore"
+				"arguments"
+				{
+					"iteminfo"
+					{
+						"type"	"objectptr"
+					}
+				}
+			}
+		}
+		"Signatures"
+		{
+			"CCSGameRules::RewardMatchEndDrops"
+			{
+				"library"		"server"
+				"linux"			"\x55\x89\xE5\x57\x56\x53\x83\xEC\x3C\xA1\x2A\x2A\x2A\x2A\x8B\x75\x0C"
+				"windows"		"\x55\x8B\xEC\x83\xE4\xF8\xA1\x2A\x2A\x2A\x2A\x83\xEC\x1C\xB9"
+			}
+			"CCSGameRules::RecordPlayerItemDrop"
+			{
+				"library"		"server"
+				"linux"			"\x55\x89\xE5\x57\x56\x53\x83\xEC\x1C\x8B\x45\x08\x8B\x80\xA4\x0E\x00\x00"
+				"windows"		"\x55\x8B\xEC\x53\x8B\xD9\x33\xD2\x56\x57\x8B\x7D\x08"
+			}
+			"Helper_FillServerReservationStateAndPlayers"
+			{
+				"library"		"server"
+				"linux"			"\x55\x89\xE5\x57\x56\x53\x83\xEC\x78\xA1"
+				"windows"		"\x55\x8B\xEC\x83\xEC\x64\x53\x8B\xD9\x8B\x0D"
+			}
+		}
+	}
+}
