@@ -7,7 +7,7 @@ public Plugin myinfo =
 {
 	name = "Drops summoner",
 	author = "Phoenix (˙·٠●Феникс●٠·˙)",
-	version = "1.0.4",
+	version = "1.0.5",
 	url = "https://github.com/komashchenko/sourcemod-plugins"
 };
 
@@ -21,6 +21,7 @@ ConVar g_hDSInfo = null;
 ConVar g_hDSPlaySound = null;
 int m_pPersonaDataPublic = -1;
 ConVar g_hDSIgnoreNonPrime = null;
+ConVar sv_matchend_drops_enabled = null;
 
 public void OnPluginStart()
 {
@@ -90,14 +91,22 @@ public void OnPluginStart()
 	
 	m_pPersonaDataPublic = FindSendPropInfo("CCSPlayer", "m_unMusicID") + 0xA;
 	
+	sv_matchend_drops_enabled = FindConVar("sv_matchend_drops_enabled");
+	ToggleMatchendDrops(false);
+	
 	BuildPath(Path_SM, g_szLogFile, sizeof g_szLogFile, "logs/DropsSummoner.log");
 	
-	g_hDSWaitTimer = CreateConVar("sm_drops_summoner_wait_timer", "182", "Длительность между попытками призвать дроп в секундах", _, true, 60.0);
-	g_hDSInfo = CreateConVar("sm_drops_summoner_info", "1", "Уведомлять в чате о попытках призыва дропа", _, true, 0.0, true, 1.0);
-	g_hDSPlaySound = CreateConVar("sm_drops_summoner_play_sound", "2", "Воспроизводить звук при получении дропа [0 - нет | 1 - только получившему | 2 - всем]", _, true, 0.0, true, 2.0);
-	g_hDSIgnoreNonPrime = CreateConVar("sm_drops_summoner_ignore_non_prime", "1", "Игнорировать дроп нон-прайм игроков (не влияет на логирование)", _, true, 0.0, true, 1.0);
+	g_hDSWaitTimer = CreateConVar("sm_drops_summoner_wait_timer", "605", "The duration between attempts to summon a drop in seconds", _, true, 603.0);
+	g_hDSInfo = CreateConVar("sm_drops_summoner_info", "1", "Notify in chat about attempts to summon a drop", _, true, 0.0, true, 1.0);
+	g_hDSPlaySound = CreateConVar("sm_drops_summoner_play_sound", "2", "Play sound when receiving a drop [0 - no | 1 - only for the recipient | 2 - everyone]", _, true, 0.0, true, 2.0);
+	g_hDSIgnoreNonPrime = CreateConVar("sm_drops_summoner_ignore_non_prime", "1", "Ignore drops for non-prime players (doesn't affect logging)", _, true, 0.0, true, 1.0);
+	
+	g_hDSWaitTimer.AddChangeHook(OnDSWaitTimerChanged);
+	OnDSWaitTimerChanged(g_hDSWaitTimer, NULL_STRING, NULL_STRING);
 	
 	AutoExecConfig(true, "DropsSummoner");
+	
+	LoadTranslations("DropsSummoner.phrases");
 }
 
 public void OnPluginEnd()
@@ -107,13 +116,24 @@ public void OnPluginEnd()
 		StoreToAddress(g_pDropForAllPlayersPatch, 0xF883, NumberType_Int16);
 		StoreToAddress(g_pDropForAllPlayersPatch + view_as<Address>(2), 0x01, NumberType_Int8);
 	}
+	
+	sv_matchend_drops_enabled.SetBounds(ConVarBound_Lower, true, 0.0);
+	sv_matchend_drops_enabled.SetBounds(ConVarBound_Upper, true, 1.0);
+	sv_matchend_drops_enabled.RestoreDefault();
 }
 
 public void OnMapStart()
 {
 	PrecacheSound("ui/panorama/case_awarded_1_uncommon_01.wav");
+}
+
+void OnDSWaitTimerChanged(ConVar hConVar, const char[] szOldValue, const char[] szNewValue)
+{
+	static Handle hTimer = null;
 	
-	CreateTimer(g_hDSWaitTimer.FloatValue, Timer_SendRewardMatchEndDrops, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+	hTimer.Close();
+	
+	hTimer = CreateTimer(g_hDSWaitTimer.FloatValue, Timer_SendRewardMatchEndDrops, _, TIMER_REPEAT);
 }
 
 MRESReturn Detour_RecordPlayerItemDrop(DHookParam hParams)
@@ -130,7 +150,7 @@ MRESReturn Detour_RecordPlayerItemDrop(DHookParam hParams)
 		int iQuality = hParams.GetObjectVar(1, 32, ObjectValueType_Int);
 		
 		static const char szPrime[] = "non-prime";
-		LogToFile(g_szLogFile, "Игроку %L<%s> выпало [%u-%u-%u-%u]", iClient, szPrime[bPrime ? 4 : 0], iDefIndex, iPaintIndex, iRarity, iQuality);
+		LogToFile(g_szLogFile, "The player %L<%s> got [%u-%u-%u-%u]", iClient, szPrime[bPrime ? 4 : 0], iDefIndex, iPaintIndex, iRarity, iQuality);
 		
 		if(!g_hDSIgnoreNonPrime.BoolValue || bPrime)
 		{
@@ -149,7 +169,7 @@ MRESReturn Detour_RecordPlayerItemDrop(DHookParam hParams)
 			EndMessage();
 			
 			SetHudTextParams(-1.0, 0.4, 3.0, 0, 255, 255, 255);
-			ShowHudText(iClient, -1, "Вам выпал дроп, смотрите свой инвентарь");
+			ShowHudText(iClient, -1, "%t", "HudNotify");
 			
 			int iPlaySound = g_hDSPlaySound.IntValue;
 			
@@ -201,8 +221,10 @@ Action Timer_SendRewardMatchEndDrops(Handle hTimer)
 	{
 		g_hTimerWaitDrops = CreateTimer(1.2, Timer_WaitDrops);
 		
-		PrintToChatAll(" \x07Пытаемся призвать дроп");
+		PrintToChatAll(" %t", "SummonDrop");
 	}
+	
+	ToggleMatchendDrops(true);
 	
 	if(g_bWindows)
 	{
@@ -213,6 +235,8 @@ Action Timer_SendRewardMatchEndDrops(Handle hTimer)
 		SDKCall(g_hRewardMatchEndDrops, 0xDEADC0DE, false);
 	}
 	
+	ToggleMatchendDrops(false);
+	
 	return Plugin_Continue;
 }
 
@@ -220,7 +244,17 @@ Action Timer_WaitDrops(Handle hTimer)
 {
 	g_hTimerWaitDrops = null;
 	
-	PrintToChatAll(" \x07Попытка провалилась :(");
+	PrintToChatAll(" %t", "AttemptFailed");
 	
 	return Plugin_Continue;
+}
+
+void ToggleMatchendDrops(bool bEnable)
+{
+	// Prevent others from changing the value
+	float fValue = bEnable ? 1.0:0.0;
+	sv_matchend_drops_enabled.SetBounds(ConVarBound_Lower, true, fValue);
+	sv_matchend_drops_enabled.SetBounds(ConVarBound_Upper, true, fValue);
+	
+	sv_matchend_drops_enabled.BoolValue = bEnable;
 }

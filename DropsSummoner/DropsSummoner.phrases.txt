@@ -1,0 +1,23 @@
+"Phrases"
+{
+	"HudNotify"
+	{
+		"en"	"You got a drop, check your inventory"
+		"ua"	"Вам випав дроп, дивіться свій інвентар"
+		"ru"	"Вам выпал дроп, смотрите свой инвентарь"
+	}
+
+	"SummonDrop"
+	{
+		"en"	"Trying to summon a drop"
+		"ua"	"Намагаємося прикликати дроп"
+		"ru"	"Пытаемся призвать дроп"
+	}
+
+	"AttemptFailed"
+	{
+		"en"	"The attempt failed :("
+		"ua"	"Спроба провалилася :("
+		"ru"	"Попытка провалилась :("
+	}
+}
